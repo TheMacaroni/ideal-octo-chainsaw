@@ -1,55 +1,42 @@
-# importe o cv2 para capturar o feed de vídeo
 import cv2
-
+import time
 import numpy as np
 
-# anexe a câmera indexada como 0
-camera = cv2.VideoCapture(0)
+#Para salvar o resultado em um arquivo chamado output.avi
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
+output_file = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
 
-# definindo a largura do quadro e a altura do quadro como 640 X 480
-camera.set(3 , 640)
-camera.set(4 , 480)
+#Iniciando a webcam
+cap = cv2.VideoCapture(0)
 
-# carregando a imagem da montanha
-mountain = cv2.imread('mount everest.jpg')
+#Permitindo que a webcam inicie fazendo o código aguardar 2 segundos
+time.sleep(2)
+bg = 0
 
-# redimensionando a imagem da montanha como 640 X 480
+#Capturando o plano de fundo durante 60 quadros
+for i in range(60):
+    ret, bg = cap.read()
+#Invertendo o plano de fundo
+bg = np.flip(bg, axis=1)
+
+#Lendo o quadro capturado até que a câmera esteja aberta
+while (cap.isOpened()):
+    ret, img = cap.read()
+    if not ret:
+        break
+    #Invertendo a imagem por motivo de consistência
+    img = np.flip(img, axis=1)
 
 
-while True:
 
-    # ler um quadro da câmera conectada
-    status , frame = camera.read()
+    #Gerando o resultado final
+    final_output = img
+    output_file.write(img)
+    #Exibindo o resultado para o usuário
+    cv2.imshow("magica", final_output)
+    cv2.waitKey(1)
 
-    # se obtivermos o quadro com sucesso
-    if status:
 
-        # inverta-o
-        frame = cv2.flip(frame , 1)
-
-        # convertendo a imagem em RGB para facilitar o processamento
-        frame_rgb = cv2.cvtColor(frame , cv2.COLOR_BGR2RGB)
-
-        # criando os limites
-        lower_bound = np.array([])
-        upper_bound = np.array([])
-
-        # imagem dentro do limite
-
-        # invertendo a máscara
-
-        # bitwise_and - operação para extrair o primeiro plano / pessoa
-
-        # imagem final
-
-        # exiba-a
-        cv2.imshow('quadro' , frame)
-
-        # espera de 1ms antes de exibir outro quadro
-        code = cv2.waitKey(1)
-        if code  ==  32:
-            break
-
-# libere a câmera e feche todas as janelas abertas
-camera.release()
+cap.release()
+out.release()
 cv2.destroyAllWindows()
